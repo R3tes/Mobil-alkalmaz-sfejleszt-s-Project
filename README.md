@@ -1,2 +1,4 @@
 # Mobile-application-development-Project
-Műszaki cikk webshop applikáció
+Téma: Műszaki cikk webshop applikáció
+Készítette: Búcsú Áron
+Neptun kód: A94K8U

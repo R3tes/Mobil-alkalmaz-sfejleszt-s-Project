@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94773551534",
+    "project_id": "gadgetzone-33b46",
+    "storage_bucket": "gadgetzone-33b46.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94773551534:android:a1c7abca8aaf166d9fe83f",
+        "android_client_info": {
+          "package_name": "com.example.gadgetzone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSSl0eb7yVPf3-TVI_dUwIEMTalC0z0Mg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,8 +5,26 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2FC5F3"
+    android:background="#24ACD6"
     tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/registrationTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_view_background"
+        android:padding="16dp"
+        android:shadowColor="#BB86FC"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="8"
+        android:text="@string/gadgetzone"
+        android:textAlignment="center"
+        android:textColor="#6200EE"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <EditText
         android:id="@+id/editTextUsername"
@@ -20,13 +38,13 @@
         android:inputType="text"
         android:padding="12dp"
         android:textColor="#333333"
-        android:textColorHint="#474747"
+        android:textColorHint="#BF474747"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.13" />
+        app:layout_constraintVertical_bias="0.291" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -41,7 +59,7 @@
         android:inputType="textPassword"
         android:padding="12dp"
         android:textColor="#333333"
-        android:textColorHint="#474747"
+        android:textColorHint="#BF474747"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +92,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="80dp"
         android:background="@drawable/button_background"
+        android:onClick="loginAsGuest"
         android:text="@string/login_guest"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
@@ -92,7 +111,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="80dp"
         android:background="@drawable/button_background"
-        android:text="@string/register"
+        android:text="@string/registration"
+        android:onClick="registration"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GadgetZone"
         tools:targetApi="31">
+
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".WebShopAcitvity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

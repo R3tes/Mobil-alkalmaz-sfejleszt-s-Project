@@ -5,4 +5,10 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="login_guest">Login as Guest</string>
+    <string name="registration">Registration</string>
+    <string name="password_again">Password again</string>
+    <string name="e_mail_address">E-mail address</string>
+    <string name="phone_number">Phone: +36 30 123 4567</string>
+    <string name="address">Address: 1234 Main St, City, Country, ZIP code</string>
+    <string name="gadgetzone">GadgetZone</string>
 </resources>

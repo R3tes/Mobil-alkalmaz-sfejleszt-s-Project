@@ -11,4 +11,50 @@
     <string name="phone_number">Phone: +36 30 123 4567</string>
     <string name="address">Address: 1234 Main St, City, Country, ZIP code</string>
     <string name="gadgetzone">GadgetZone</string>
+    <string name="delete">Delete</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="general_product_information">General product infromation</string>
+    <string name="product_description">Product description</string>
+    <string name="search">Search</string>
+    <string name="cart">Cart</string>
+    <string name="home">Home</string>
+    <string name="log_out">Log out</string>
+    <string name="settings">Settings</string>
+
+    <string-array name="shopping_item_names">
+        <item>Smartphone</item>
+        <item>Tablet</item>
+        <item>PC</item>
+        <item>Laptop</item>
+        <item>Headphone</item>
+        <item>AC</item>
+    </string-array>
+
+    <string-array name="shopping_item_desc">
+        <item>IPhone 12</item>
+        <item>Ipad</item>
+        <item>Gaming PC set</item>
+        <item>HP Laptop</item>
+        <item>Sony Headphone</item>
+        <item>Philips Air Conditioner</item>
+    </string-array>
+
+    <array name="shopping_item_price">
+        <item>800 $</item>
+        <item>450 $</item>
+        <item>250 $</item>
+        <item>50 $</item>
+        <item>150 $</item>
+        <item>600 $</item>
+    </array>
+
+    <array name="webshop_products">
+        <item>@drawable/phone</item>
+        <item>@drawable/tablet</item>
+        <item>@drawable/pc</item>
+        <item>@drawable/laptop</item>
+        <item>@drawable/headphone</item>
+        <item>@drawable/ac</item>
+    </array>
+
 </resources>

@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.GadgetZone" parent="Base.Theme.GadgetZone" />
+    <style name="ItemDetailText" parent="TextAppearance.AppCompat.Subhead"/>
 </resources>

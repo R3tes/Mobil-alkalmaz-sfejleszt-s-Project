@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,11 +19,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String LOG_TAG = MainActivity.class.getName();
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
+public class MainActivity extends AppCompatActivity {
     private static final String PREF_KEY = Objects.requireNonNull(MainActivity.class.getPackage()).toString();
-    private static final int LOG_KEY = 420696;
 
     EditText usernameEditText;
     EditText passwordEditText;
@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        TextView titleTextView = findViewById(R.id.titleTextView);
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        titleTextView.startAnimation(fadeIn);
 
         usernameEditText = findViewById(R.id.editTextUsername);
         passwordEditText = findViewById(R.id.editTextPassword);
@@ -63,17 +67,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startWebShop() {
-        Intent intent = new Intent(this, WebShopActivity.class);
+        Intent intent = new Intent(this, WebshopActivity.class);
         startActivity(intent);
     }
 
     public void loginAsGuest(View view) {
         mAuth.signInAnonymously().addOnCompleteListener(this, task -> {
             if(task.isSuccessful()){
-                Log.d(LOG_TAG, "Guest user loged in successfully");
                 startWebShop();
             } else {
-                Log.d(LOG_TAG, "Anonym user log in fail");
                 Toast.makeText(MainActivity.this, "User log in fail: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -81,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void registration(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
-        intent.putExtra("LOG_KEY", LOG_KEY);
         startActivity(intent);
     }
 }

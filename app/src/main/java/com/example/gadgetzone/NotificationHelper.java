@@ -36,20 +36,21 @@ public class NotificationHelper {
         channel.enableLights(true);
         channel.setLightColor(Color.RED);
         channel.enableVibration(true);
-        channel.setDescription("Notifications from GadgetZone application");
+        channel.setDescription("GadgetZone notifications");
 
         mNotifyManager.createNotificationChannel(channel);
     }
 
     public void send(String message) {
-        Intent intent = new Intent(mContext, WebshopActivity.class);
+        Intent intent = new Intent(mContext, LoginActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setContentTitle("GadgetZone")
+                .setContentTitle("New Products Have Arrived!")
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_shopping_cart)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         mNotifyManager.notify(NOTIFICATION_ID, builder.build());
     }

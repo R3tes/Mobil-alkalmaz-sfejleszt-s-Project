@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/product_image" />
 
         <TextView
             android:id="@+id/itemTitle"
@@ -23,7 +23,7 @@
             android:layout_below="@id/itemImage"
             android:padding="8dp"
             android:text="@string/product_description"
-            android:textColor="?android:textColorSecondary" />
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/subTitle"
@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/itemTitle"
             android:padding="8dp"
-            android:text="@string/general_product_information" />
+            android:text="@string/general_product_information"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/price"
@@ -60,13 +61,6 @@
                 android:layout_margin="5dp"
                 android:text="@string/add_to_cart" />
 
-            <Button
-                android:id="@+id/delete"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/delete" />
         </LinearLayout>
 
     </RelativeLayout>

@@ -3,4 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FFF00000</color>
+    <color name="lighter_red">#FF2626</color>
+    <color name="grey_overlay">#B3616161</color>
+    <color name="blue">#372AB1</color>
+
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>

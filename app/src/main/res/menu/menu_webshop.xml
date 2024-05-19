@@ -1,0 +1,53 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/searchBar"
+        android:icon="@drawable/ic_search"
+        android:tint="@color/white"
+        android:title="@string/search"
+        android:queryHint="Search for products"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"
+         />
+
+    <item
+        android:id="@+id/cart"
+        android:icon="@drawable/ic_shopping_cart"
+        android:title="@string/cart"
+        app:actionLayout="@layout/activity_cart_view"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/filter"
+        android:title="@string/filter"
+        android:icon="@drawable/ic_filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/fiveMostExpensive"
+                android:title="@string/_5_most_expensive_products" />
+            <item
+                android:id="@+id/overHundredDollars"
+                android:title="@string/over_100_products" />
+            <item
+                android:id="@+id/emptyFilters"
+                android:title="@string/empty_filters" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/profileButton"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/logoutButton"
+        android:icon="@drawable/ic_logout"
+        android:title="@string/log_out"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+</menu>

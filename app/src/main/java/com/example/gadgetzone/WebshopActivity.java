@@ -3,20 +3,21 @@ package com.example.gadgetzone;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,59 +28,66 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.Objects;
 
 public class WebshopActivity extends AppCompatActivity {
 
-    private FirebaseFirestore mFirestore;
-    private CollectionReference mItems;
+    private static final String LOG_TAG = RegisterActivity.class.getName();
+    private FirebaseFirestore Firestore;
+    private CollectionReference products;
     private RecyclerView recyclerView;
     private int cartItems = 0;
     private ProductAdapter productAdapter;
     private FrameLayout redCircle;
-    private ArrayList<Product> mProductData;
-    private boolean viewRow = true;
-    private NotificationHelper mNotificationHelper;
+    private ArrayList<Product> productData;
     private TextView countTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.webshop_product_list);
+        setContentView(R.layout.activity_webshop_product_list);
 
-        mProductData = new ArrayList<>();
+        productData = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
-        productAdapter = new ProductAdapter(this, mProductData);
+        productAdapter = new ProductAdapter(this, productData);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productAdapter);
 
-        mFirestore = FirebaseFirestore.getInstance();
-        mItems = mFirestore.collection("Items");
-        mNotificationHelper = new NotificationHelper(this);
+        // Add the menubar to the action bar
+        setSupportActionBar(findViewById(R.id.toolbar));
+
+        Firestore = FirebaseFirestore.getInstance();
+        products = Firestore.collection("products");
 
         queryData();
     }
 
     private void queryData() {
-        mProductData.clear();
-        mItems.orderBy("cartedCount", Query.Direction.DESCENDING).get()
+        productData.clear();
+        products.orderBy("name")
+                .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Product product = document.toObject(Product.class);
-                        product.set_id(document.getId());
-                        mProductData.add(product);
+                        product.setId(document.getId()); // Use setId() instead of set_id()
+                        productData.add(product);
                     }
 
-                    if (mProductData.isEmpty()) {
+                    if (productData.isEmpty()) {
                         initializeData();
                     }
 
                     productAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    if (mProductData.size() == 0) {
+                    if (productData.isEmpty()) {
                         Log.d("WebshopActivity", "No products fetched, initializing data...");
                         initializeData();
                         productAdapter.notifyDataSetChanged();
@@ -88,40 +96,110 @@ public class WebshopActivity extends AppCompatActivity {
     }
 
     private void initializeData() {
-        String[] itemsList = getResources().getStringArray(R.array.shopping_item_names);
-        String[] itemsPrice = getResources().getStringArray(R.array.shopping_item_price);
-        String[] itemsInfo = getResources().getStringArray(R.array.shopping_item_desc);
-        TypedArray itemsImageResources = getResources().obtainTypedArray(R.array.webshop_products);
+        String[] productList = getResources().getStringArray(R.array.webshop_product_names);
+        String[] productPrice = getResources().getStringArray(R.array.webshop_product_price);
+        String[] productQuantity = getResources().getStringArray(R.array.webshop_product_quantity);
+        String[] productInfo = getResources().getStringArray(R.array.webshop_product_information);
+        TypedArray productImageResources = getResources().obtainTypedArray(R.array.webshop_products);
 
-        if (itemsList.length != itemsPrice.length || itemsList.length != itemsInfo.length || itemsList.length != itemsImageResources.length()) {
+        if (productList.length != productPrice.length || productList.length != productInfo.length ||
+                productList.length != productImageResources.length() ||
+                productList.length != productQuantity.length) {
             return;
         }
 
-        for (int i = 0; i < itemsList.length; i++) {
-            String price = itemsPrice[i].replaceAll("[^0-9.]", "");
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+        for (int i = 0; i < productList.length; i++) {
+            String price = productPrice[i].replaceAll("[^0-9.]", "");
             if (price.isEmpty()) {
                 price = "0";
             }
 
-            mProductData.add(new Product(
-                    itemsList[i],
-                    Double.parseDouble(price),
-                    itemsInfo[i],
-                    0,
-                    itemsImageResources.getResourceId(i, 0),
-                    0));
+            // Create new final variables
+            final int finalI = i;
+            final String finalPrice = price;
+
+            // Create a reference to the image file
+            StorageReference imageRef = storageRef.child("images/" + productList[i] + ".jpg");
+
+            // Get the resource ID
+            int resourceId = productImageResources.getResourceId(i, 0);
+
+            // Create a bitmap from the resource
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
+
+            try {
+                // Create a temporary file
+                File tempFile = File.createTempFile("image", "jpg", getCacheDir());
+                tempFile.deleteOnExit();
+
+                // Write the bitmap to the temporary file
+                try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                }
+
+                // Get the Uri for the temporary file
+                Uri fileUri = Uri.fromFile(tempFile);
+
+                // Upload the file to Firebase Storage
+                imageRef.putFile(fileUri)
+                        .continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            // Continue with the task to get the download URL
+                            return imageRef.getDownloadUrl();
+                        })
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+
+                                // Create a new Product object
+                                Product product = new Product(
+                                        null,
+                                        productList[finalI],
+                                        Integer.parseInt(productQuantity[finalI]),
+                                        productInfo[finalI],
+                                        Double.parseDouble(finalPrice),
+                                        downloadUri.toString()
+                                );
+
+                                // Add the Product object to Firestore
+                                DocumentReference newProductRef = products.document();
+                                product.setId(newProductRef.getId()); // Set the auto-generated ID to the product
+                                newProductRef.set(product)
+                                        .addOnSuccessListener(aVoid -> Log.d(LOG_TAG,
+                                                "DocumentSnapshot added with ID: " + newProductRef.getId()))
+                                        .addOnFailureListener(e -> Log.w(LOG_TAG,
+                                                "Error adding document", e));
+                            } else {
+                                // Handle failures
+                                Log.w(LOG_TAG, "Error getting download URL", task.getException());
+                            }
+                        });
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error creating temporary file", e);
+            }
         }
 
-        itemsImageResources.recycle();
+        productImageResources.recycle();
         productAdapter.notifyDataSetChanged();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.webshop_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.search_bar);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        getMenuInflater().inflate(R.menu.menu_webshop, menu);
+        MenuItem searchItem = menu.findItem(R.id.searchBar);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        // Set the logout and profile options to be invisible by default
+        MenuItem logoutItem = menu.findItem(R.id.logoutButton);
+        MenuItem profileItem = menu.findItem(R.id.profileButton);
+        logoutItem.setVisible(false);
+        profileItem.setVisible(false);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -137,42 +215,94 @@ public class WebshopActivity extends AppCompatActivity {
         return true;
     }
 
+    boolean isFiveMostExpensiveActive = false;
+    boolean isOverHundredDollarsActive = false;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.log_out_button) {
+        if (itemId == R.id.logoutButton) {
             FirebaseAuth.getInstance().signOut();
             finish();
             return true;
-        } else if (itemId == R.id.settings_button) {
-            FirebaseAuth.getInstance().signOut();
-            finish();
+        } else if (itemId == R.id.profileButton) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         } else if (itemId == R.id.cart) {
             return true;
-        } else if (itemId == R.id.view_selector) {
-            if (viewRow) {
-                changeSpanCount(item, R.drawable.ic_view_grid, 1);
-            } else {
-                changeSpanCount(item, R.drawable.ic_view_row, 2);
-            }
+        } else if (itemId == R.id.fiveMostExpensive) {
+            isFiveMostExpensiveActive = !isFiveMostExpensiveActive;
+            fetchData();
+            return true;
+        } else if (itemId == R.id.overHundredDollars) {
+            isOverHundredDollarsActive = !isOverHundredDollarsActive;
+            fetchData();
+            return true;
+        } else if (itemId == R.id.emptyFilters) {
+            isFiveMostExpensiveActive = false;
+            isOverHundredDollarsActive = false;
+            queryData();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
     }
 
-    private void changeSpanCount(MenuItem item, int drawableId, int spanCount) {
-        viewRow = !viewRow;
-        item.setIcon(drawableId);
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager instanceof GridLayoutManager) {
-            ((GridLayoutManager) layoutManager).setSpanCount(spanCount);
+    private void fetchData() {
+        productData.clear();
+
+        Query query;
+        if (isFiveMostExpensiveActive) {
+            query = products.orderBy("price", Query.Direction.DESCENDING).limit(5);
+        } else if (isOverHundredDollarsActive) {
+            query = products.whereGreaterThan("price", 100.00)
+                    .orderBy("name", Query.Direction.ASCENDING);
+        } else {
+            return;
         }
+        executeQuery(query);
+    }
+
+    private void executeQuery(Query query) {
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                runOnUiThread(() -> {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        product.setId(document.getId());
+                        productData.add(product);
+                    }
+                    productAdapter.notifyDataSetChanged();
+                });
+            } else {
+                Log.w(LOG_TAG, "Error getting documents.", task.getException());
+            }
+        });
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem logoutItem = menu.findItem(R.id.logoutButton);
+        MenuItem profileItem = menu.findItem(R.id.profileButton);
+
+        // Check if the user is logged in
+        boolean isLoggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
+
+        // Check if the user is a guest
+        boolean isGuest = isLoggedIn && FirebaseAuth.getInstance().getCurrentUser().isAnonymous();
+
+        // If the user is logged in and not a guest, make the logout and profile options visible
+        if (isLoggedIn && !isGuest) {
+            logoutItem.setVisible(true);
+            profileItem.setVisible(true);
+        } else {
+            logoutItem.setVisible(false);
+            profileItem.setVisible(false);
+        }
+
         final MenuItem alertMenuItem = menu.findItem(R.id.cart);
         FrameLayout rootView = (FrameLayout) alertMenuItem.getActionView();
 
@@ -180,46 +310,18 @@ public class WebshopActivity extends AppCompatActivity {
         countTextView = rootView.findViewById(R.id.view_alert_count_textview);
 
         rootView.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     public void updateAlertIcon(Product item) {
-        String id = item.get_id();
+        String id = item.getId();
         if (id != null) {
             cartItems++;
             countTextView.setText(cartItems > 0 ? String.valueOf(cartItems) : "");
             redCircle.setVisibility(cartItems > 0 ? VISIBLE : GONE);
-
-            mItems.document(id).update("cartedCount", item.getCartedCount() + 1)
-                    .addOnFailureListener(fail -> displayToast("Item " + id + " cannot be changed."));
-
-            mNotificationHelper.send(item.getName());
-            updateDataAndNotify();
         } else {
             Log.e("WebshopActivity", "Product ID is null");
         }
     }
 
-    public void deleteItem(Product item) {
-        String id = item.get_id();
-        if (id != null) {
-            DocumentReference ref = mItems.document(id);
-            ref.delete()
-                    .addOnSuccessListener(success -> displayToast("Item " + id + " deleted."))
-                    .addOnFailureListener(fail -> displayToast("Item " + id + " cannot be deleted."));
-
-            updateDataAndNotify();
-            mNotificationHelper.cancel();
-        } else {
-            Log.e("WebshopActivity", "Product ID is null");
-        }
-    }
-
-    private void updateDataAndNotify() {
-        queryData();
-    }
-
-    private void displayToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
 }

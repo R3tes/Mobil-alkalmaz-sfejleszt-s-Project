@@ -30,7 +30,7 @@
                 android:title="@string/_5_most_expensive_products" />
             <item
                 android:id="@+id/overHundredDollars"
-                android:title="@string/over_100_products" />
+                android:title="@string/over_300_products" />
             <item
                 android:id="@+id/emptyFilters"
                 android:title="@string/empty_filters" />

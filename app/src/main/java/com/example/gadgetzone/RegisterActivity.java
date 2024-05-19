@@ -58,14 +58,6 @@ public class RegisterActivity extends AppCompatActivity {
         phoneNumberEditText = findViewById(R.id.phoneNumberEditText);
         addressEditText = findViewById(R.id.addressEditText);
 
-        // Set test data
-        usernameEditText.setText("TestUser");
-        emailEditText.setText("testuser@example.com");
-        passwordEditText.setText("TestPassword123");
-        passwordAgainEditText.setText("TestPassword123");
-        phoneNumberEditText.setText("1234567890");
-        addressEditText.setText("Test Address");
-
         mAuth = FirebaseAuth.getInstance();
     }
 

@@ -278,15 +278,6 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-//        mAuth.getCurrentUser().updatePassword(newPassword)
-//                .addOnCompleteListener(passwordTask -> {
-//                    if (passwordTask.isSuccessful()) {
-//                        Log.d(LOG_TAG, "User password updated.");
-//                        refreshActivity();
-//                    } else {
-//                        Log.w(LOG_TAG, "Error updating password", passwordTask.getException());
-//                    }
-//                });
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             currentUser.updatePassword(newPassword)
@@ -419,6 +410,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .setTitle("Delete Profile")
                 .setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+
                     // Delete user data from Firestore
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     String userId = Objects.requireNonNull(FirebaseAuth.getInstance().
@@ -441,7 +433,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Log.d(LOG_TAG, "User deleted from Firebase Authentication");
-                                    // Redirect to login activity
+
                                     Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);

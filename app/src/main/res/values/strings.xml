@@ -41,25 +41,25 @@
     <string name="product_image">Product Image</string>
     <string name="filter">Filter</string>
     <string name="_5_most_expensive_products">5 most expensive products</string>
-    <string name="over_100_products">Over $100 products</string>
+    <string name="over_300_products">Over $300 products</string>
     <string name="empty_filters">Empty Filters</string>
 
     <string-array name="webshop_product_names">
-        <item>Smartphone</item>
-        <item>Tablet</item>
-        <item>PC</item>
-        <item>Laptop</item>
-        <item>Headphone</item>
-        <item>AC</item>
+        <item>Next-Generation Smartphone with AI</item>
+        <item>High-Resolution Tablet</item>
+        <item>Powerful Desktop PC</item>
+        <item>Ultra-Lightweight and High-Performance Laptop</item>
+        <item>Noise-Cancelling Headphones</item>
+        <item>Energy-Efficient Air Conditioner</item>
     </string-array>
 
     <string-array name="webshop_product_information">
-        <item>IPhone 12</item>
-        <item>Ipad</item>
-        <item>Gaming PC set</item>
-        <item>HP Laptop</item>
-        <item>Sony Headphone</item>
-        <item>Philips Air Conditioner</item>
+        <item>IPhone 12 - 5G Capable Smartphone with A14 Bionic Chip</item>
+        <item>Ipad - 10.2-Inch Retina Display with A12 Bionic Chip</item>
+        <item>Gaming PC set - High Performance Desktop with Latest Graphics Card</item>
+        <item>HP Laptop - Portable Laptop with High-Speed Processor and Long Battery Life</item>
+        <item>Sony Headphone - Noise-Cancelling Over-Ear Headphones with Deep Bass</item>
+        <item>Philips Air Conditioner - Energy-Efficient Air Conditioner with Fast Cooling Technology</item>
     </string-array>
 
     <string-array name="webshop_product_quantity">
@@ -72,12 +72,12 @@
     </string-array>
 
     <array name="webshop_product_price">
-        <item>800 $</item>
-        <item>450 $</item>
-        <item>250 $</item>
-        <item>50 $</item>
-        <item>150 $</item>
-        <item>600 $</item>
+        <item>1200 $</item>
+        <item>400 $</item>
+        <item>320 $</item>
+        <item>260 $</item>
+        <item>70 $</item>
+        <item>700 $</item>
     </array>
 
     <array name="webshop_products">

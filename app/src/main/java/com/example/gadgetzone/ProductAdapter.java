@@ -10,6 +10,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,14 +48,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
-        Product currentItem = productData.get(position);
-        holder.bindTo(currentItem, this);
+        Product currentProduct = productData.get(position);
+        holder.bindTo(currentProduct, this);
 
         if (holder.getAdapterPosition() > lastPosition && !isButtonClicked) {
             holder.itemView.startAnimation(AnimationUtils.loadAnimation(productContext,
                     R.anim.logo_entrance_pop_in));
             lastPosition = holder.getAdapterPosition();
         }
+
+        int price = (int) currentProduct.getPrice();
+        String formattedPrice = String.format("%d $", price);
+        holder.productPriceText.setText(formattedPrice);
+        holder.quantityTextView.setText(String.format("On storage: %d piece", currentProduct.getQuantity()));
+
         isButtonClicked = false;
     }
 
@@ -115,6 +122,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         TextView productInfoText;
         TextView productPriceText;
         ImageView productImage;
+        TextView quantityTextView;
 
         ProductViewHolder(View itemView) {
             super(itemView);
@@ -122,19 +130,30 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productInfoText = itemView.findViewById(R.id.subTitle);
             productImage = itemView.findViewById(R.id.itemImage);
             productPriceText = itemView.findViewById(R.id.price);
+            quantityTextView = itemView.findViewById(R.id.quantity);
         }
 
 
         void bindTo(Product currentItem, ProductAdapter adapter) {
             productTitleText.setText(currentItem.getName());
-            productInfoText.setText(currentItem.getInformation());
+
+            String productInfo = "<b>Product Description:</b> " + "\n" + currentItem.getInformation();
+            productInfoText.setText(android.text.Html.fromHtml(productInfo));
+
             productPriceText.setText(String.valueOf(currentItem.getPrice()));
 
             Glide.with(itemView.getContext()).load(currentItem.getProductImage()).into(productImage);
 
             itemView.findViewById(R.id.add_to_cart).setOnClickListener(view -> {
-                ((WebshopActivity) itemView.getContext()).updateAlertIcon(currentItem);
-                adapter.setButtonClicked(true);
+                if (currentItem.getQuantity() > 0) {
+                    ((WebshopActivity) itemView.getContext()).updateAlertIcon(currentItem);
+                    currentItem.setQuantity(currentItem.getQuantity() - 1);
+                    quantityTextView.setText(String.format("On storage: %d piece", currentItem.getQuantity()));
+                    adapter.setButtonClicked(true);
+                } else {
+                    Toast.makeText(itemView.getContext(), "This product is out of stock",
+                            Toast.LENGTH_SHORT).show();
+                }
             });
         }
 

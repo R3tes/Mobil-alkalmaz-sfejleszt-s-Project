@@ -23,7 +23,8 @@
             android:layout_below="@id/itemImage"
             android:padding="8dp"
             android:text="@string/product_description"
-            android:textColor="@color/black" />
+            android:textColor="@color/blue"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subTitle"
@@ -42,12 +43,23 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/subTitle"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="12dp"
             android:padding="8dp"
             android:textColor="@color/red" />
 
+        <TextView
+            android:id="@+id/quantity"
+            style="@style/ItemDetailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/price"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            android:textColor="@color/black" />
+
         <LinearLayout
             style="?android:attr/buttonBarStyle"
+            android:layout_marginTop="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/price"

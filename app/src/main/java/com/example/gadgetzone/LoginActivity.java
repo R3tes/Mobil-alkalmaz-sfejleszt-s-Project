@@ -44,9 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
 
-        emailEditText.setText("testuser@example.com");
-        passwordEditText.setText("TestPassword123");
-
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
     }

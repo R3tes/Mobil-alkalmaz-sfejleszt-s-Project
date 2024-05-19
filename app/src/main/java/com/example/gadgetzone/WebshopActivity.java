@@ -60,7 +60,6 @@ public class WebshopActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productAdapter);
 
-        // Add the menubar to the action bar
         setSupportActionBar(findViewById(R.id.toolbar));
 
         Firestore = FirebaseFirestore.getInstance();
@@ -76,7 +75,7 @@ public class WebshopActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Product product = document.toObject(Product.class);
-                        product.setId(document.getId()); // Use setId() instead of set_id()
+                        product.setId(document.getId());
                         productData.add(product);
                     }
 
@@ -116,46 +115,36 @@ public class WebshopActivity extends AppCompatActivity {
                 price = "0";
             }
 
-            // Create new final variables
             final int finalI = i;
             final String finalPrice = price;
 
-            // Create a reference to the image file
             StorageReference imageRef = storageRef.child("images/" + productList[i] + ".jpg");
 
-            // Get the resource ID
             int resourceId = productImageResources.getResourceId(i, 0);
 
-            // Create a bitmap from the resource
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
 
             try {
-                // Create a temporary file
                 File tempFile = File.createTempFile("image", "jpg", getCacheDir());
                 tempFile.deleteOnExit();
 
-                // Write the bitmap to the temporary file
                 try (FileOutputStream out = new FileOutputStream(tempFile)) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                 }
 
-                // Get the Uri for the temporary file
                 Uri fileUri = Uri.fromFile(tempFile);
 
-                // Upload the file to Firebase Storage
                 imageRef.putFile(fileUri)
                         .continueWithTask(task -> {
                             if (!task.isSuccessful()) {
                                 throw Objects.requireNonNull(task.getException());
                             }
-                            // Continue with the task to get the download URL
                             return imageRef.getDownloadUrl();
                         })
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
 
-                                // Create a new Product object
                                 Product product = new Product(
                                         null,
                                         productList[finalI],
@@ -165,9 +154,8 @@ public class WebshopActivity extends AppCompatActivity {
                                         downloadUri.toString()
                                 );
 
-                                // Add the Product object to Firestore
                                 DocumentReference newProductRef = products.document();
-                                product.setId(newProductRef.getId()); // Set the auto-generated ID to the product
+                                product.setId(newProductRef.getId());
                                 newProductRef.set(product)
                                         .addOnSuccessListener(aVoid -> Log.d(LOG_TAG,
                                                 "DocumentSnapshot added with ID: " + newProductRef.getId()))
@@ -194,7 +182,6 @@ public class WebshopActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.searchBar);
         SearchView searchView = (SearchView) searchItem.getActionView();
 
-        // Set the logout and profile options to be invisible by default
         MenuItem logoutItem = menu.findItem(R.id.logoutButton);
         MenuItem profileItem = menu.findItem(R.id.profileButton);
         logoutItem.setVisible(false);
@@ -256,8 +243,8 @@ public class WebshopActivity extends AppCompatActivity {
         if (isFiveMostExpensiveActive) {
             query = products.orderBy("price", Query.Direction.DESCENDING).limit(5);
         } else if (isOverHundredDollarsActive) {
-            query = products.whereGreaterThan("price", 100.00)
-                    .orderBy("name", Query.Direction.ASCENDING);
+            query = products.whereGreaterThan("price", 300.00);
+            query = query.orderBy("price", Query.Direction.ASCENDING);
         } else {
             return;
         }
@@ -288,13 +275,9 @@ public class WebshopActivity extends AppCompatActivity {
         MenuItem logoutItem = menu.findItem(R.id.logoutButton);
         MenuItem profileItem = menu.findItem(R.id.profileButton);
 
-        // Check if the user is logged in
         boolean isLoggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
-
-        // Check if the user is a guest
         boolean isGuest = isLoggedIn && FirebaseAuth.getInstance().getCurrentUser().isAnonymous();
 
-        // If the user is logged in and not a guest, make the logout and profile options visible
         if (isLoggedIn && !isGuest) {
             logoutItem.setVisible(true);
             profileItem.setVisible(true);

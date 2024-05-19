@@ -1,5 +1,7 @@
 package com.example.gadgetzone;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -58,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
 
         ImageView logoImageView = findViewById(R.id.logoImageView);
         logoImageView.clearAnimation();
